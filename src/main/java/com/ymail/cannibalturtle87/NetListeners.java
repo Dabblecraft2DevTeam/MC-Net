@@ -15,6 +15,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.command.*;
 
 public class NetListeners implements Listener {
     
@@ -30,25 +31,27 @@ public class NetListeners implements Listener {
                             ItemStack is = e.getItem();
                             if(is.hasItemMeta()) {
                                 ItemMeta im = is.getItemMeta();
-                                if(im.getDisplayName().equals("Log-in Disc")) {
+                                if(im.getDisplayName().equals("\u00a7rLog-in Disc")) {
                                     if(e.getClickedBlock().getType() == Material.SIGN || e.getClickedBlock().getType() == Material.SIGN_POST || e.getClickedBlock().getType() == Material.WALL_SIGN) {
                                         if(Computer.getOS(sign) != null) {
-                                            Computer c = new Computer();
+                                        	if (Computer.isLoggedIn(playa))
+	                                            Computer.logOut(playa);
+                                        	Computer c = new Computer();
                                             c.setSign(sign);
                                             c.setOperatingSystem(OperatingSystem.getOSByName(ChatColor.stripColor(sign.getLine(2))));
                                             playa.openInventory(c.getOS().homeScreen(playa));
                                             Computer.logIn(playa, c);
-                                        }else {
+                                        } else {
                                             playa.sendMessage(ChatColor.RED + "Unable to log-in. Reason: no operating system.");
                                         }
                                     }
                                 }
-                                if(im.getDisplayName().equals("Operating System")) {
+                                if(im.getDisplayName().equals("\u00A7rOperating System")) {
                                     String name = im.getLore().get(0);
                                     if(e.getClickedBlock().getType() == Material.SIGN || e.getClickedBlock().getType() == Material.SIGN_POST || e.getClickedBlock().getType() == Material.WALL_SIGN) {
                                         Computer c = new Computer();
                                         c.setSign(sign);
-                                        c.setOperatingSystem(OperatingSystem.getOSByName(name));
+                                        c.setOperatingSystem(OperatingSystem.getOSByName(ChatColor.stripColor(name)));
                                         playa.sendMessage(ChatColor.GREEN + name + " successfully installed!");
                                         playa.getInventory().removeItem(is);
                                         playa.updateInventory();
@@ -56,7 +59,7 @@ public class NetListeners implements Listener {
                                 }
                             }
                         }
-                    }else {
+                    } else {
                         playa.sendMessage(ChatColor.RED + "You need a log-in disc to do that!");
                     }
                 }
@@ -73,28 +76,24 @@ public class NetListeners implements Listener {
                 if(e.getRawSlot() <= 53) {
                     if(e.getCurrentItem().getType() == c.getOS().getMenuIcon().getType()) {
                         playa.openInventory(c.getOS().homeScreen(playa));
-                    }
-                    if(e.getCurrentItem().getType() == c.getOS().getLogOutIcon().getType()) {
+                    } else if(e.getCurrentItem().getType() == c.getOS().getLogOutIcon().getType()) {
                         Computer.logOut(playa);
                         playa.closeInventory();
                         playa.sendMessage(ChatColor.GREEN + "Logged out successfully!");
-                    }
-                    if(e.getInventory().getTitle().equalsIgnoreCase("Computer")) {
+                    } else if(e.getInventory().getTitle().equalsIgnoreCase("Computer")) {
                         if(e.getCurrentItem().getType() == c.getOS().getUsersIcon().getType()) {
                             playa.openInventory(c.getOS().usersScreen(playa));
                         }
                         if(e.getCurrentItem().getType() == c.getOS().getComposeIcon().getType()) {
                             playa.openInventory(c.getOS().contactsScreen(playa));
                         }
-                    }
-                    if(e.getInventory().getTitle().equalsIgnoreCase("Computer - Contacts")) {
+                    } else if(e.getInventory().getTitle().equalsIgnoreCase("Computer - Contacts")) {
                         if(e.getCurrentItem().getType() == c.getOS().getUsersIcon().getType()) {
                             Player p = Bukkit.getPlayer(e.getCurrentItem().getItemMeta().getDisplayName());
                             c.setRecipient(p);
                             playa.openInventory(c.getOS().composeScreen(playa));
                         }
-                    }
-                    if(e.getInventory().getTitle().equalsIgnoreCase("Computer - File Upload")) {
+                    } else if(e.getInventory().getTitle().equalsIgnoreCase("Computer - File Upload")) {
                         if(e.getCursor().getType() == Material.WRITTEN_BOOK || e.getCursor().getType() == Material.BOOK_AND_QUILL) {
                             if(c.getRecipient().isOnline()) {
                                 c.getRecipient().getPlayer().openInventory(c.getOS().inboxScreen(c.getRecipient().getPlayer(), e.getCursor()));
@@ -103,14 +102,13 @@ public class NetListeners implements Listener {
                                 playa.sendMessage(ChatColor.RED + c.getRecipient().getName() + " is no longer online!");
                             }
                         }
-                    }
-                    if(e.getInventory().getTitle().equalsIgnoreCase("Computer - File Receive")) {
+                    } else if(e.getInventory().getTitle().equalsIgnoreCase("Computer - File Receive")) {
                         if(e.getCurrentItem().getType() == Material.WRITTEN_BOOK || e.getCurrentItem().getType() == Material.BOOK_AND_QUILL) {
                             e.setCancelled(false);
                             return;
                         }
                     }
-                    e.setCancelled(true);
+                    e.setCancelled(c.getOS().onInventoryClick(e));
                 }
             }
         }catch(NullPointerException npe){}

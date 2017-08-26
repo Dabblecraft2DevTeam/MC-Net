@@ -4,15 +4,14 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class MinecraftOS extends OperatingSystem {
-    
-    public MinecraftOS() {
-        super("MinecraftOS");
+public class ComOS extends OperatingSystem {
+    public ComOS() {
+        super("Com/OS");
     }
 
     @Override
     public ItemStack getMenuIcon() {
-        ItemStack menu = new ItemStack(Material.NETHER_STAR, 1);
+        ItemStack menu = new ItemStack(Material.EYE_OF_ENDER, 1);
         ItemMeta menuMeta = menu.getItemMeta();
         menuMeta.setDisplayName("Menu");
         menu.setItemMeta(menuMeta);
@@ -39,7 +38,7 @@ public class MinecraftOS extends OperatingSystem {
 
     @Override
     public ItemStack getComposeIcon() {
-        ItemStack compose = new ItemStack(Material.BOOK_AND_QUILL, 1, (short) 3);
+        ItemStack compose = new ItemStack(Material.BOOK_AND_QUILL, 1);
         ItemMeta composeMeta = compose.getItemMeta();
         composeMeta.setDisplayName("Compose");
         compose.setItemMeta(composeMeta);

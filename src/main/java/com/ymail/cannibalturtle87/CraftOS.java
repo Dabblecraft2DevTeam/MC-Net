@@ -1,68 +1,24 @@
 package com.ymail.cannibalturtle87;
 
-import java.util.ArrayList;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.DyeColor;
+import org.bukkit.event.inventory.InventoryClickEvent;
 
-public abstract class OperatingSystem {
-    
-    private final String name;
-    
-    public OperatingSystem(String name) {
-        this.name = name;
+import java.util.ArrayList;
+
+public class CraftOS extends OperatingSystem {
+
+    public CraftOS() {
+        super("CraftOS");
     }
     
-    public String getName() {
-        return name;
-    }
-    
-    public static OperatingSystem getOSByName(String name) {
-        switch (name) {
-            case "MinecraftOS":
-                return new MinecraftOS();
-            case "CraftOS":
-                return new CraftOS();
-            default:
-                return null;
-        }
-    }
-    
-    public static ItemStack getOSDisc(String name) {
-        ItemStack osDisc = new ItemStack(Material.GREEN_RECORD, 1);
-        ItemMeta osMeta = osDisc.getItemMeta();
-        osMeta.setDisplayName("Operating System");
-        ArrayList<String> osLore = new ArrayList<>();
-        osMeta.setLore(null);
-        switch (name) {
-            case "MinecraftOS":
-                osLore.add("MinecraftOS");
-                osMeta.setLore(osLore);
-                osDisc.setItemMeta(osMeta);
-                return osDisc;
-            case "CraftOS":
-                osLore.add("CraftOS");
-                osMeta.setLore(osLore);
-                osDisc.setItemMeta(osMeta);
-                return osDisc;
-            default:
-                return null;
-        }
-    }
-    
-    public static ItemStack getLoginDisc() {
-        ItemStack osDisc = new ItemStack(Material.RECORD_3, 1);
-        ItemMeta osMeta = osDisc.getItemMeta();
-        osMeta.setLore(null);
-        osMeta.setDisplayName("Log-in Disc");
-        osDisc.setItemMeta(osMeta);
-        return osDisc;
-    }
-    
+    @Override
     public Inventory homeScreen(Player playa) {
         Inventory inv = Bukkit.createInventory(playa, 54, "Computer");
         ItemStack menu = getMenuIcon();
@@ -75,13 +31,36 @@ public abstract class OperatingSystem {
             inv.setItem(i, getTaskbar());
         }
         inv.setItem(45, menu);
-        inv.setItem(46, users);
-        inv.setItem(47, compose);
+        inv.setItem(0, users);
+        inv.setItem(9, compose);
+        if (Main.blingjeweledpresent) {
+        	inv.setItem(18, getBlingJeweledIcon());
+        }
         ItemStack logOut = getLogOutIcon();
-        inv.setItem(53, logOut);
+        inv.setItem(52, logOut);
+        inv.setItem(53, Utils.setName(new ItemStack(Material.WATCH, 1), "\u00A7r\u00A76Clock"));
         return inv;
     }
-
+    
+    private ItemStack getBlingJeweledIcon() {
+    	return Utils.setName(new ItemStack(Material.EMERALD, 1), "\u00A7r\u00A7aBlingJeweled");
+    }
+    
+    @Override
+    public boolean onInventoryClick(InventoryClickEvent e) {
+    	Player player = (Player) e.getWhoClicked();
+        if(e.getRawSlot() <= 53) {
+            if(e.getInventory().getTitle().equalsIgnoreCase("Computer")) {
+                if(e.getCurrentItem().getType() == getBlingJeweledIcon().getType() && Main.blingjeweledpresent) {
+                	player.closeInventory();
+                    com.sethbling.blingjeweled.BlingJeweled.instance.newGame(player);
+                }
+            }
+        }
+        return false;
+    }
+    
+    @Override
     public Inventory contactsScreen(Player playa) {
         Inventory inv = Bukkit.createInventory(playa, 54, "Computer - Contacts");
         ItemStack users = getUsersIcon();
@@ -95,8 +74,8 @@ public abstract class OperatingSystem {
             ItemMeta usersMeta = users.getItemMeta();
             Player[] loggedInPlayers = new Player[]{};
             loggedInPlayers = Computer.getLoggedInPlayers().keySet().toArray(loggedInPlayers);
-            usersMeta.setDisplayName(loggedInPlayers[i].getName());
-            String ip = "IP: " + ChatColor.GREEN + loggedInPlayers[i].getUniqueId().toString();
+            usersMeta.setDisplayName("\u00A7r" + loggedInPlayers[i].getName());
+            String ip = "\u00A7rID: " + ChatColor.GREEN + loggedInPlayers[i].getUniqueId().toString();
             ArrayList<String> lore = new ArrayList<>();
             lore.add(ip);
             usersMeta.setLore(lore);
@@ -106,10 +85,12 @@ public abstract class OperatingSystem {
         ItemStack menu = getMenuIcon();
         inv.setItem(45, menu);
         ItemStack logOut = getLogOutIcon();
-        inv.setItem(53, logOut);
+        inv.setItem(52, logOut);
+        inv.setItem(53, Utils.setName(new ItemStack(Material.WATCH, 1), "\u00A7r\u00A76Clock"));
         return inv;
     }
     
+    @Override
     public Inventory composeScreen(Player playa) {
         Inventory inv = Bukkit.createInventory(playa, 54, "Computer - File Upload");
         ItemStack yellowGlass = new ItemStack(Material.STAINED_GLASS_PANE, 1);
@@ -131,10 +112,12 @@ public abstract class OperatingSystem {
         ItemStack menu = getMenuIcon();
         inv.setItem(45, menu);
         ItemStack logOut = getLogOutIcon();
-        inv.setItem(53, logOut);
+        inv.setItem(52, logOut);
+        inv.setItem(53, Utils.setName(new ItemStack(Material.WATCH, 1), "\u00A7r\u00A76Clock"));
         return inv;
     }
-
+    
+    @Override
     public Inventory inboxScreen(Player playa, ItemStack is) {
         Inventory inv = Bukkit.createInventory(playa, 54, "Computer - File Receive");
         ItemStack whiteGlass = new ItemStack(Material.STAINED_GLASS_PANE, 1);
@@ -156,10 +139,12 @@ public abstract class OperatingSystem {
         ItemStack menu = getMenuIcon();
         inv.setItem(45, menu);
         ItemStack logOut = getLogOutIcon();
-        inv.setItem(53, logOut);
+        inv.setItem(52, logOut);
+        inv.setItem(53, Utils.setName(new ItemStack(Material.WATCH, 1), "\u00A7r\u00A76Clock"));
         return inv;
     }
-
+    
+    @Override
     public Inventory usersScreen(Player playa) {
         Inventory inv = Bukkit.createInventory(playa, 54, "Computer - Users");
         ItemStack users = getUsersIcon();
@@ -169,32 +154,53 @@ public abstract class OperatingSystem {
         for(int i = 45; i < 54; i++) {
             inv.setItem(i, getTaskbar());
         }
-        for(int i = 0; i < Bukkit.getOnlinePlayers().length; i++) {
+        int i = 0;
+        for(Player p : Bukkit.getServer().getOnlinePlayers()) {
             ItemMeta usersMeta = users.getItemMeta();
-            usersMeta.setDisplayName(Bukkit.getOnlinePlayers()[i].getName());
-            String ip = "IP: " + ChatColor.GREEN + Bukkit.getOnlinePlayers()[i].getUniqueId().toString();
+            usersMeta.setDisplayName("\u00A7r" + p.getName());
+            String ip = "\u00A7rID: " + ChatColor.GREEN + p.getUniqueId().toString();
             ArrayList<String> lore = new ArrayList<>();
             lore.add(ip);
             usersMeta.setLore(lore);
             users.setItemMeta(usersMeta);
             inv.setItem(i, users);
+            i ++;
         }
         ItemStack menu = getMenuIcon();
         inv.setItem(45, menu);
         ItemStack logOut = getLogOutIcon();
-        inv.setItem(53, logOut);
+        inv.setItem(52, logOut);
+        inv.setItem(53, Utils.setName(new ItemStack(Material.WATCH, 1), "\u00A7r\u00A76Clock"));
         return inv;
     }
-    
-    public abstract ItemStack getMenuIcon();
-    
-    public abstract ItemStack getUsersIcon();
-    
-    public abstract ItemStack getComposeIcon();
-    
-    public abstract ItemStack getLogOutIcon();
-    
-    public abstract ItemStack getBackground();
-    
-    public abstract ItemStack getTaskbar();
+
+    @Override
+    public ItemStack getMenuIcon() {
+        return Utils.setName(new ItemStack(Material.NETHER_STAR, 1), "\u00A7r\u00A75Menu");
+    }
+
+    @Override
+    public ItemStack getUsersIcon() {
+        return Utils.setName(new ItemStack(Material.SKULL_ITEM, 1, (short) 3), "\u00A7rUsers");
+    }
+
+    @Override
+    public ItemStack getLogOutIcon() {
+        return Utils.setName(new ItemStack(Material.IRON_AXE, 1), "\u00A7rLog Out");
+    }
+
+    @Override
+    public ItemStack getComposeIcon() {
+        return Utils.setName(new ItemStack(Material.BOOK_AND_QUILL, 1), "\u00A7rFile Transfer");
+    }
+
+    @Override
+    public ItemStack getBackground() {
+        return Utils.setName(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 15), "\u00A7rDesktop");
+    }
+
+    @Override
+    public ItemStack getTaskbar() {
+        return Utils.setName(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 3), "\u00A7rTaskbar");
+    }
 }
