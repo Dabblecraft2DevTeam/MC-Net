@@ -5,8 +5,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class Utils {
-	public Utils() {}
-	
 	public static ItemStack setName(ItemStack is, String name){
         ItemMeta m = is.getItemMeta();
         m.setDisplayName(name);

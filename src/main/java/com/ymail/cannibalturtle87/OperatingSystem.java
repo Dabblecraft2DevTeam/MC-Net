@@ -11,7 +11,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 public abstract class OperatingSystem {
-    
     private final String name;
     
     public OperatingSystem(String name) {
@@ -97,7 +96,7 @@ public abstract class OperatingSystem {
             Player[] loggedInPlayers = new Player[]{};
             loggedInPlayers = Computer.getLoggedInPlayers().keySet().toArray(loggedInPlayers);
             usersMeta.setDisplayName(loggedInPlayers[i].getName());
-            String ip = "\u00A7ID: " + ChatColor.GREEN + loggedInPlayers[i].getUniqueId().toString();
+            String ip = "ID: " + ChatColor.GREEN + loggedInPlayers[i].getUniqueId().toString();
             ArrayList<String> lore = new ArrayList<>();
             lore.add(ip);
             usersMeta.setLore(lore);
@@ -173,8 +172,8 @@ public abstract class OperatingSystem {
         int i = 0;
         for(Player p : Bukkit.getServer().getOnlinePlayers()) {
             ItemMeta usersMeta = users.getItemMeta();
-            usersMeta.setDisplayName("\u00A7r" + p.getName());
-            String ip = "\u00A7rID: " + ChatColor.GREEN + p.getUniqueId().toString();
+            usersMeta.setDisplayName(p.getName());
+            String ip = "ID: " + ChatColor.GREEN + p.getUniqueId().toString();
             ArrayList<String> lore = new ArrayList<>();
             lore.add(ip);
             usersMeta.setLore(lore);

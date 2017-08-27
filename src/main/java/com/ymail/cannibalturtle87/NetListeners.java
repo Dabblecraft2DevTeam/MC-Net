@@ -18,7 +18,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.command.*;
 
 public class NetListeners implements Listener {
-    
     @EventHandler
     public void onRightClick(PlayerInteractEvent e) {
         Player playa = e.getPlayer();
@@ -33,7 +32,7 @@ public class NetListeners implements Listener {
                                 ItemMeta im = is.getItemMeta();
                                 if(im.getDisplayName().equals("\u00a7rLog-in Disc")) {
                                     if(e.getClickedBlock().getType() == Material.SIGN || e.getClickedBlock().getType() == Material.SIGN_POST || e.getClickedBlock().getType() == Material.WALL_SIGN) {
-                                        if(Computer.getOS(sign) != null) {
+                                        if(Computer.getOS(sign) != null || !sign.getLine(2).contains(ChatColor.GREEN.toString())) {
                                         	if (Computer.isLoggedIn(playa))
 	                                            Computer.logOut(playa);
                                         	Computer c = new Computer();
@@ -74,41 +73,43 @@ public class NetListeners implements Listener {
                 Player playa = (Player) e.getWhoClicked();
                 Computer c = Computer.getLoggedInPlayers().get(playa);
                 if(e.getRawSlot() <= 53) {
-                    if(e.getCurrentItem().getType() == c.getOS().getMenuIcon().getType()) {
-                        playa.openInventory(c.getOS().homeScreen(playa));
-                    } else if(e.getCurrentItem().getType() == c.getOS().getLogOutIcon().getType()) {
-                        Computer.logOut(playa);
-                        playa.closeInventory();
-                        playa.sendMessage(ChatColor.GREEN + "Logged out successfully!");
-                    } else if(e.getInventory().getTitle().equalsIgnoreCase("Computer")) {
-                        if(e.getCurrentItem().getType() == c.getOS().getUsersIcon().getType()) {
-                            playa.openInventory(c.getOS().usersScreen(playa));
-                        }
-                        if(e.getCurrentItem().getType() == c.getOS().getComposeIcon().getType()) {
-                            playa.openInventory(c.getOS().contactsScreen(playa));
-                        }
-                    } else if(e.getInventory().getTitle().equalsIgnoreCase("Computer - Contacts")) {
-                        if(e.getCurrentItem().getType() == c.getOS().getUsersIcon().getType()) {
-                            Player p = Bukkit.getPlayer(e.getCurrentItem().getItemMeta().getDisplayName());
-                            c.setRecipient(p);
-                            playa.openInventory(c.getOS().composeScreen(playa));
-                        }
-                    } else if(e.getInventory().getTitle().equalsIgnoreCase("Computer - File Upload")) {
-                        if(e.getCursor().getType() == Material.WRITTEN_BOOK || e.getCursor().getType() == Material.BOOK_AND_QUILL) {
-                            if(c.getRecipient().isOnline()) {
-                                c.getRecipient().getPlayer().openInventory(c.getOS().inboxScreen(c.getRecipient().getPlayer(), e.getCursor()));
-                                playa.openInventory(c.getOS().homeScreen(playa));
-                            }else {
-                                playa.sendMessage(ChatColor.RED + c.getRecipient().getName() + " is no longer online!");
+                    if (!c.getOS().onInventoryClick(e)) {
+                        if(e.getCurrentItem().getType() == c.getOS().getMenuIcon().getType()) {
+                            playa.openInventory(c.getOS().homeScreen(playa));
+                        } else if(e.getCurrentItem().getType() == c.getOS().getLogOutIcon().getType()) {
+                            Computer.logOut(playa);
+                            playa.closeInventory();
+                            playa.sendMessage(ChatColor.GREEN + "Logged out successfully!");
+                        } else if(e.getInventory().getTitle().equalsIgnoreCase("Computer")) {
+                            if(e.getCurrentItem().getType() == c.getOS().getUsersIcon().getType()) {
+                                playa.openInventory(c.getOS().usersScreen(playa));
+                            }
+                            if(e.getCurrentItem().getType() == c.getOS().getComposeIcon().getType()) {
+                                playa.openInventory(c.getOS().contactsScreen(playa));
+                            }
+                        } else if(e.getInventory().getTitle().equalsIgnoreCase("Computer - Contacts")) {
+                            if(e.getCurrentItem().getType() == c.getOS().getUsersIcon().getType()) {
+                                Player p = Bukkit.getServer().getPlayer(ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName()));
+                                c.setRecipient(Bukkit.getServer().getOfflinePlayer(p.getUniqueId()));
+                                playa.openInventory(c.getOS().composeScreen(playa));
+                            }
+                        } else if(e.getInventory().getTitle().equalsIgnoreCase("Computer - File Upload")) {
+                            if(e.getCursor().getType() == Material.WRITTEN_BOOK || e.getCursor().getType() == Material.BOOK_AND_QUILL) {
+                                if(c.getRecipient().isOnline()) {
+                                    c.getRecipient().getPlayer().openInventory(c.getOS().inboxScreen(c.getRecipient().getPlayer(), e.getCursor()));
+                                    playa.openInventory(c.getOS().homeScreen(playa));
+                                }else {
+                                    playa.sendMessage(ChatColor.RED + c.getRecipient().getName() + " is no longer online!");
+                                }
+                            }
+                        } else if(e.getInventory().getTitle().equalsIgnoreCase("Computer - File Receive")) {
+                            if(e.getCurrentItem().getType() == Material.WRITTEN_BOOK || e.getCurrentItem().getType() == Material.BOOK_AND_QUILL) {
+                                e.setCancelled(false);
+                                return;
                             }
                         }
-                    } else if(e.getInventory().getTitle().equalsIgnoreCase("Computer - File Receive")) {
-                        if(e.getCurrentItem().getType() == Material.WRITTEN_BOOK || e.getCurrentItem().getType() == Material.BOOK_AND_QUILL) {
-                            e.setCancelled(false);
-                            return;
-                        }
                     }
-                    e.setCancelled(c.getOS().onInventoryClick(e));
+                    e.setCancelled(true);
                 }
             }
         }catch(NullPointerException npe){}
@@ -126,9 +127,17 @@ public class NetListeners implements Listener {
     public void onSignCreate(SignChangeEvent e) {
         Player playa = e.getPlayer();
         if(e.getLine(0).equalsIgnoreCase("[Computer]")) {
+            e.setLine(0, "[Computer]");
+            e.setLine(1, "");
+            e.setLine(2, "");
+            e.setLine(3, "");
             playa.sendMessage(ChatColor.GREEN + "Successfully built a computer!");
         }
         if(e.getLine(0).equalsIgnoreCase("[Server]")) {
+            e.setLine(0, "[Server]");
+            e.setLine(1, "");
+            e.setLine(2, "");
+            e.setLine(3, "");
             playa.sendMessage("This is a server!");
         }
     }
