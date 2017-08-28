@@ -70,7 +70,7 @@ public class NetListeners implements Listener {
     @EventHandler
     public void OnPlayerInteract(PlayerInteractEvent e){
         Player player = e.getPlayer();
-        if ((e.getClickedBlock().getType() == Material.SIGN || e.getClickedBlock().getType() == Material.SIGN_POST || e.getClickedBlock().getType() == Material.WALL_SIGN) && e.getAction() == Action.LEFT_CLICK_BLOCK) {
+        if (e.getClickedBlock() != null && (e.getClickedBlock().getType() == Material.SIGN || e.getClickedBlock().getType() == Material.SIGN_POST || e.getClickedBlock().getType() == Material.WALL_SIGN) && e.getAction() == Action.LEFT_CLICK_BLOCK) {
             System.out.println("Yee");
             Sign sign = (Sign) e.getClickedBlock().getState();
             if (Computer.getType(sign) != -1) {
