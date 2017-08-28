@@ -35,17 +35,17 @@ public abstract class OperatingSystem {
     public static ItemStack getOSDisc(String name) {
         ItemStack osDisc = new ItemStack(Material.GREEN_RECORD, 1);
         ItemMeta osMeta = osDisc.getItemMeta();
-        osMeta.setDisplayName("\u00A7rOperating System");
+        osMeta.setDisplayName("\u00A7bOperating System");
         ArrayList<String> osLore = new ArrayList<>();
         osMeta.setLore(null);
         switch (name) {
             case "Com/OS":
-                osLore.add("\u00A7rCom/OS");
+                osLore.add("\u00A75Com/OS");
                 osMeta.setLore(osLore);
                 osDisc.setItemMeta(osMeta);
                 return osDisc;
             case "CraftOS":
-                osLore.add("\u00A7rCraftOS");
+                osLore.add("\u00A75CraftOS");
                 osMeta.setLore(osLore);
                 osDisc.setItemMeta(osMeta);
                 return osDisc;
@@ -58,7 +58,7 @@ public abstract class OperatingSystem {
         ItemStack osDisc = new ItemStack(Material.RECORD_3, 1);
         ItemMeta osMeta = osDisc.getItemMeta();
         osMeta.setLore(null);
-        osMeta.setDisplayName("\u00A7rLog-in Disc");
+        osMeta.setDisplayName("\u00A7bLog-in Disc");
         osDisc.setItemMeta(osMeta);
         return osDisc;
     }
