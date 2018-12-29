@@ -8,9 +8,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.event.inventory.InventoryClickEvent;
 
 public abstract class OperatingSystem {
-    
     private final String name;
     
     public OperatingSystem(String name) {
@@ -23,8 +23,8 @@ public abstract class OperatingSystem {
     
     public static OperatingSystem getOSByName(String name) {
         switch (name) {
-            case "MinecraftOS":
-                return new MinecraftOS();
+            case "Com/OS":
+                return new ComOS();
             case "CraftOS":
                 return new CraftOS();
             default:
@@ -35,17 +35,17 @@ public abstract class OperatingSystem {
     public static ItemStack getOSDisc(String name) {
         ItemStack osDisc = new ItemStack(Material.GREEN_RECORD, 1);
         ItemMeta osMeta = osDisc.getItemMeta();
-        osMeta.setDisplayName("Operating System");
+        osMeta.setDisplayName("\u00A7bOperating System");
         ArrayList<String> osLore = new ArrayList<>();
         osMeta.setLore(null);
         switch (name) {
-            case "MinecraftOS":
-                osLore.add("MinecraftOS");
+            case "Com/OS":
+                osLore.add("\u00A75Com/OS");
                 osMeta.setLore(osLore);
                 osDisc.setItemMeta(osMeta);
                 return osDisc;
             case "CraftOS":
-                osLore.add("CraftOS");
+                osLore.add("\u00A75CraftOS");
                 osMeta.setLore(osLore);
                 osDisc.setItemMeta(osMeta);
                 return osDisc;
@@ -58,7 +58,7 @@ public abstract class OperatingSystem {
         ItemStack osDisc = new ItemStack(Material.RECORD_3, 1);
         ItemMeta osMeta = osDisc.getItemMeta();
         osMeta.setLore(null);
-        osMeta.setDisplayName("Log-in Disc");
+        osMeta.setDisplayName("\u00A7bLog-in Disc");
         osDisc.setItemMeta(osMeta);
         return osDisc;
     }
@@ -96,7 +96,7 @@ public abstract class OperatingSystem {
             Player[] loggedInPlayers = new Player[]{};
             loggedInPlayers = Computer.getLoggedInPlayers().keySet().toArray(loggedInPlayers);
             usersMeta.setDisplayName(loggedInPlayers[i].getName());
-            String ip = "IP: " + ChatColor.GREEN + loggedInPlayers[i].getUniqueId().toString();
+            String ip = "ID: " + ChatColor.GREEN + loggedInPlayers[i].getUniqueId().toString();
             ArrayList<String> lore = new ArrayList<>();
             lore.add(ip);
             usersMeta.setLore(lore);
@@ -169,15 +169,17 @@ public abstract class OperatingSystem {
         for(int i = 45; i < 54; i++) {
             inv.setItem(i, getTaskbar());
         }
-        for(int i = 0; i < Bukkit.getOnlinePlayers().length; i++) {
+        int i = 0;
+        for(Player p : Bukkit.getServer().getOnlinePlayers()) {
             ItemMeta usersMeta = users.getItemMeta();
-            usersMeta.setDisplayName(Bukkit.getOnlinePlayers()[i].getName());
-            String ip = "IP: " + ChatColor.GREEN + Bukkit.getOnlinePlayers()[i].getUniqueId().toString();
+            usersMeta.setDisplayName(p.getName());
+            String ip = "ID: " + ChatColor.GREEN + p.getUniqueId().toString();
             ArrayList<String> lore = new ArrayList<>();
             lore.add(ip);
             usersMeta.setLore(lore);
             users.setItemMeta(usersMeta);
             inv.setItem(i, users);
+            i ++;
         }
         ItemStack menu = getMenuIcon();
         inv.setItem(45, menu);
@@ -185,6 +187,10 @@ public abstract class OperatingSystem {
         inv.setItem(53, logOut);
         return inv;
     }
+    
+    public boolean onInventoryClick(InventoryClickEvent e) {
+    	return false;
+    };
     
     public abstract ItemStack getMenuIcon();
     

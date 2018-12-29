@@ -15,6 +15,7 @@ public class Computer {
     private OperatingSystem os = null;
     public static int COMPUTER = 0x000000, SERVER = 0x000001;
     private static final HashMap<Player, Computer> loggedInPlayers = new HashMap<>();
+
     
     public static HashMap<Player, Computer> getLoggedInPlayers() {
         return loggedInPlayers;

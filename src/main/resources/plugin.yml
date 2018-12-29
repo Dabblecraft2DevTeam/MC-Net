@@ -1,0 +1,15 @@
+name: MC-Net
+main: com.ymail.cannibalturtle87.Main
+version: 1.0.0
+author: cannibalturtle87, Pugduddly
+commands:
+   getosdisc:
+      description: Gives player an OS disc
+      usage: /getosdisc <OS name>
+      permission: mcnet.command.getosdisc
+      permission-message: You don't have <permission>
+   getlogindisc:
+      description: Gives player a login disc
+      usage: /getlogindisc
+      permission: mcnet.command.getlogindisc
+      permission-message: You don't have <permission>
